@@ -13,3 +13,35 @@ We will :
 - Adapt our models
 - Benchmark them
 - Analyze the results
+
+# To use this code :
+
+## Download uv : 
+
+#### On macOS and Linux
+```bash 
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
+
+#### On Windows
+```bash 
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
+
+#### With pip
+```bash
+pip install uv
+```
+
+#### With Homebrew.
+```bash
+brew install uv
+```
+
+
+## Install dependencies
+In your terminal, run  :
+```bash
+uv sync
+```
