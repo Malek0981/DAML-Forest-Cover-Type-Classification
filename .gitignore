@@ -5,3 +5,6 @@
 
 # Caches
 __pycache__/
+
+# Folders
+DATA/raw/*
