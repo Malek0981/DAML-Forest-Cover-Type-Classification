@@ -4,8 +4,16 @@
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{lmodern}
-\usepackage[a4paper,top=2.05cm,bottom=1.9cm,left=2.25cm,right=2.25cm]{geometry}
-\usepackage{xcolor,tikz,amsmath,amssymb,booktabs,tabularx,array,graphicx,microtype}
+\usepackage[
+    a4paper,
+    top=1.5cm,
+    bottom=1.5cm,
+    left=1.7cm,
+    right=1.7cm,
+    headheight=13pt,
+    headsep=0.35cm,
+    footskip=0.65cm
+]{geometry}\usepackage{xcolor,tikz,amsmath,amssymb,booktabs,tabularx,array,graphicx,microtype}
 \usepackage{enumitem,fancyhdr,hyperref,listings}
 \usepackage[font=small,labelfont=bf]{caption}
 \usepackage{titlesec}
@@ -25,16 +33,34 @@
 \titleformat{\subsection}
 {\normalsize\bfseries\color{deepblue}}{\thesubsection}{0.6em}{}
 
-\titlespacing*{\section}{0pt}{0.65em}{0.25em}
-\titlespacing*{\subsection}{0pt}{0.45em}{0.16em}
+% Section spacing
+\titlespacing*{\section}{0pt}{0.55em}{0.2em}
+\titlespacing*{\subsection}{0pt}{0.4em}{0.12em}
 
+% Paragraph spacing
 \setlength{\parindent}{0pt}
-\setlength{\parskip}{2.6pt}
-\setlength{\textfloatsep}{7pt}
-\setlength{\intextsep}{6pt}
+\setlength{\parskip}{2pt}
 
-\setlist[itemize]{nosep,leftmargin=1.3em,topsep=2pt}
-\captionsetup{skip=3pt}
+% Figures and tables
+\setlength{\textfloatsep}{6pt}
+\setlength{\intextsep}{5pt}
+\setlength{\floatsep}{5pt}
+\captionsetup{skip=2pt}
+
+% Equations
+\AtBeginDocument{
+    \setlength{\abovedisplayskip}{6pt}
+    \setlength{\belowdisplayskip}{6pt}
+    \setlength{\abovedisplayshortskip}{3pt}
+    \setlength{\belowdisplayshortskip}{4pt}
+}
+
+% Lists
+\setlist[itemize]{
+    nosep,
+    leftmargin=1.3em,
+    topsep=1pt
+}
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -121,24 +147,9 @@ CentraleSup\'elec \hfill Academic year \AcademicYear}\par
 
 \section{Introduction}
 
-Forest cover type classification aims to predict the dominant forest cover
-type of a geographical area based on environmental and cartographic
-characteristics. The Covertype dataset, available from the UCI Machine
-Learning Repository, provides a large-scale multiclass classification
-problem involving seven forest cover types and 54 input features.
-Its combination of continuous and categorical variables, together
-with the potentially complex relationships between features and classes,
-makes it an interesting challenge for machine learning algorithms.
+Forest cover type classification aims to predict the dominant forest cover type of a geographical area based on its environmental and cartographic characteristics. In this project, we use the Covertype dataset, available from the UCI Machine Learning Repository, which focuses on forest ecosystems in four wilderness areas of the Roosevelt National Forest in northern Colorado. It provides a large-scale multiclass classification problem involving seven forest cover types, based on geographical and environmental variables such as elevation, slope, distances to water and roads, sunlight exposure, and soil characteristics. The combination of different types of features, together with the potentially complex and nonlinear relationships between environmental conditions and forest cover, makes this dataset an interesting challenge for machine learning algorithms.
 
-The main objective of this project is to develop a classifier that
-achieves the highest possible predictive performance on the Covertype
-dataset. To this end, several machine learning algorithms are
-implemented and evaluated. Different preprocessing techniques,
-dimensionality reduction through Principal Component Analysis (PCA),
-and hyperparameter optimization are investigated to identify the most
-effective configuration. The resulting models are assessed using
-appropriate classification metrics, while computational cost is also
-considered to evaluate the practicality of the proposed solutions.
+The main objective of this project is to develop a classifier that achieves the highest possible predictive performance on the Covertype dataset. To this end, several machine learning algorithms are implemented and evaluated. Different preprocessing techniques, dimensionality reduction through Principal Component Analysis (PCA), and hyperparameter optimization are investigated to identify the most effective configuration. The resulting models are assessed using appropriate classification metrics, while computational cost is also considered to evaluate the practicality of the proposed solutions.
 
 
 % =========================================================
@@ -756,7 +767,7 @@ However, overall metrics do not fully describe performance
 across the seven classes. Figure~\ref{fig:class_performance}
 compares class-specific F1-scores and recall values.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
     \centering
     \includegraphics[
         width=0.95\linewidth,
@@ -974,5 +985,112 @@ UCI Machine Learning Repository,
 
 
 \end{thebibliography}
+
+
+% =========================================================
+% USER GUIDE
+% =========================================================
+
+\clearpage
+\section*{User Guide: Running and Modifying the Experiments}
+
+\subsection*{Installation and Setup}
+
+The project requires Python 3.12 or later. From the repository
+root, install the package and its dependencies using:
+
+\begin{lstlisting}[language=bash]
+python -m pip install -e .
+\end{lstlisting}
+
+This installs the required libraries, including NumPy, pandas,
+scikit-learn, Matplotlib, Seaborn, and Jupyter's Python kernel.
+The two notebooks can then be opened and executed in VS Code
+or Jupyter using the corresponding Python environment.
+
+\subsection*{Data Loading and Utilities}
+
+The \texttt{Utils/Utils.py} module provides the shared functions
+for data loading, splitting, and preprocessing.
+
+The dataset is loaded using:
+
+\begin{lstlisting}[language=Python]
+from Utils.Utils import load_covertype_data
+X, y = load_covertype_data(flatten_target=True)
+\end{lstlisting}
+
+If local Parquet files are available in \texttt{DATA/raw/},
+they are loaded directly. Otherwise, the dataset is
+automatically downloaded from the UCI repository and cached
+locally for subsequent runs.
+
+The \texttt{split\_data()} function creates training, validation,
+and test sets. By default, it uses stratified sampling with
+proportions 70\%/15\%/15\% and random seed 42.
+
+\subsection*{Running the Notebooks}
+
+The project is organized around two notebooks:
+
+\begin{itemize}
+    \item \texttt{DATA/data\_explore.ipynb}: dataset exploration,
+    class distributions, feature analysis, preprocessing
+    transformations, and PCA visualizations.
+
+    \item \texttt{experiments.ipynb}: training, hyperparameter
+    optimization, and evaluation of Random Forest, KNN,
+    and MLP classifiers, followed by their final comparison.
+\end{itemize}
+
+Run the notebooks from top to bottom, starting with data
+exploration if desired. The experiments notebook can also
+be executed independently, as it loads and splits the data
+using the shared utilities. Results and figures are displayed
+directly in the notebooks.
+Some experiments, particularly MLP training and hyperparameter
+searches, can be time-consuming. We therefore recommend using
+the saved notebook outputs to inspect the results rather than
+rerunning every experiment. Individual cells can be executed
+when testing specific configurations.
+
+\subsection*{Changing Parameters}
+
+Preprocessing options are configured through
+\texttt{PreprocessingConfig} in \texttt{Utils/Utils.py}.
+For example:
+
+\begin{lstlisting}[language=Python]
+from Utils.Utils import (
+    PreprocessingConfig, build_preprocessor
+)
+
+config = PreprocessingConfig(
+    scaling=True,
+    cyclic_aspect=True,
+    pca="numeric",
+    pca_components=0.95
+)
+preprocessor = build_preprocessor(config)
+\end{lstlisting}
+
+The PCA mode can be set to \texttt{"none"},
+\texttt{"numeric"}, or \texttt{"all"}.
+The \texttt{pca\_components} parameter accepts either
+a number of components or a retained variance ratio.
+Rare soil filtering can also be enabled using
+\texttt{rare\_soil\_threshold}.
+
+Model hyperparameters can be modified directly in
+\texttt{experiments.ipynb}, particularly in the
+\emph{Hyperparameter Optimization} sections of each
+classifier. For example, the Random Forest search grid
+controls the number of trees, feature subsampling,
+and class-weighting exponent.
+
+After changing a configuration, rerun the relevant cells
+and their dependencies. Model configurations are compared
+primarily using validation macro-F1, while the final test
+evaluation is performed after model selection.
 
 \end{document}
